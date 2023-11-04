@@ -32,6 +32,14 @@ public class MinecartListener implements Listener
                     var ew = rails.getBlockData().getAsString().contains(SHAPE_EW); // rails go along X axis
 
                     Bukkit.getLogger().info(ew ? "--X--" : "--Z--");
+
+                    // get cart movement direction: EWSN
+
+                    // get rail block after switch block (return if it ain't no rail)
+
+                    // get passenger POV
+
+                    // switch rails
                 }
             }
         }
