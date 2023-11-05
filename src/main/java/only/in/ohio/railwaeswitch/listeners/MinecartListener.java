@@ -78,7 +78,9 @@ public class MinecartListener implements Listener
         // derailing prevention
         for (int i = 3; i > 0; )
         {
-            if (!blockIsAnyRail(rail.getRelative(routes.get(--i)))) routes.remove(i);
+            var next = rail.getRelative(routes.get(--i));
+            var down = next.getRelative(BlockFace.DOWN);
+            if (!(blockIsAnyRail(next) || blockIsAnyRail(down))) routes.remove(i);
         }
 
         // go straight if there's nowhere to turn
