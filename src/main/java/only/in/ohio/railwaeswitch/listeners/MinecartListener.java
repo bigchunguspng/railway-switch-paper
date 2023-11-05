@@ -41,14 +41,14 @@ public class MinecartListener implements Listener
             if (next.getBlockData().getAsString().contains(SHAPE_ASC)) return;
 
             var yaw = passenger.getLocation().getYaw();
-            setRailShape(next, getRailShape(direction, yaw));
+            setRailShape(next, getRailShape(next, direction, yaw));
         }
     }
 
     private static boolean blockIsTwoWaySwitch(Block rails)
     {
-        var bottom = rails.getRelative(BlockFace.DOWN);
-        return rails.getType() == Material.ACTIVATOR_RAIL && bottom.getType() == Material.IRON_BLOCK;
+        var bottom = rails.getRelative(BlockFace.DOWN).getType();
+        return rails.getType() == Material.ACTIVATOR_RAIL && (bottom == Material.IRON_BLOCK || bottom == Material.OAK_LOG);
     }
 
     private static Location getVelocity(VehicleMoveEvent event)
@@ -64,10 +64,8 @@ public class MinecartListener implements Listener
         else return BlockFace.SELF;
     }
 
-    private static Rail.Shape getRailShape(BlockFace minecartDirection, float passengerYaw)
+    private static Rail.Shape getRailShape(Block rail, BlockFace minecartDirection, float passengerYaw)
     {
-        // todo select only valid directions (1-3)
-
         var routes = new ArrayList<BlockFace>();
         routes.add(BlockFace.NORTH);
         routes.add(BlockFace.EAST);
@@ -76,6 +74,15 @@ public class MinecartListener implements Listener
 
         // can't turn backwards
         routes.remove(minecartDirection.getOppositeFace());
+
+        // derailing prevention
+        for (int i = 3; i > 0; )
+        {
+            if (!blockIsAnyRail(rail.getRelative(routes.get(--i)))) routes.remove(i);
+        }
+
+        // go straight if there's nowhere to turn
+        if (routes.isEmpty()) return getRailShape(minecartDirection, minecartDirection);
 
         var angles = routes.stream().map(x -> angleDifference(passengerYaw, getDirectionYaw(x))).collect(Collectors.toList());
 
@@ -86,7 +93,13 @@ public class MinecartListener implements Listener
         return getRailShape(minecartDirection, route);
     }
 
-    public static float getDirectionYaw(BlockFace direction)
+    private static boolean blockIsAnyRail(Block block)
+    {
+        var type = block.getType();
+        return type == Material.RAIL || type == Material.POWERED_RAIL || type == Material.ACTIVATOR_RAIL || type == Material.DETECTOR_RAIL;
+    }
+
+    private static float getDirectionYaw(BlockFace direction)
     {
         return switch (direction)
         {
