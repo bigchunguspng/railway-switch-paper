@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -120,27 +121,14 @@ public class MinecartListener implements Listener
 
     private static Rail.Shape getRailShape(BlockFace straight, BlockFace turn)
     {
-        if (straight == turn)
-        {
-            return straight.ordinal() % 2 == 0 ? Rail.Shape.NORTH_SOUTH : Rail.Shape.EAST_WEST;
-        }
-        if (straight == BlockFace.NORTH)
-        {
-            return turn == BlockFace.EAST ? Rail.Shape.SOUTH_EAST : Rail.Shape.SOUTH_WEST;
-        }
-        if (straight == BlockFace.SOUTH)
-        {
-            return turn == BlockFace.EAST ? Rail.Shape.NORTH_EAST : Rail.Shape.NORTH_WEST;
-        }
-        if (straight == BlockFace.EAST)
-        {
-            return turn == BlockFace.NORTH ? Rail.Shape.NORTH_WEST : Rail.Shape.SOUTH_WEST;
-        }
-        if (straight == BlockFace.WEST)
-        {
-            return turn == BlockFace.NORTH ? Rail.Shape.NORTH_EAST : Rail.Shape.SOUTH_EAST;
-        }
-        return Rail.Shape.EAST_WEST; // <-- literally anything
+        var alongZ = straight.ordinal() % 2 == 0;
+
+        if (straight == turn) return alongZ ? Rail.Shape.NORTH_SOUTH : Rail.Shape.EAST_WEST;
+
+        var a = straight.getOppositeFace().name();
+        var b = turn.name();
+
+        return Rail.Shape.valueOf(MessageFormat.format(alongZ ? "{0}_{1}" : "{1}_{0}", a, b));
     }
 
     private static void setRailShape(Block rail, Rail.Shape shape)
