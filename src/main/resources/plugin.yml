@@ -2,4 +2,4 @@ name: railwaeswitch
 version: '${project.version}'
 main: only.in.ohio.railwaeswitch.Plugin
 api-version: '1.17'
-description: Adds railwhy switchers to the game
+description: Adds railway switches to the game
