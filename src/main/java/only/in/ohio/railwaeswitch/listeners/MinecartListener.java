@@ -30,10 +30,17 @@ public class MinecartListener implements Listener
         var passenger = passengers.get(0);
 
         var rails = vehicle.getLocation().getBlock();
+        var supporting = rails.getRelative(BlockFace.DOWN);
 
-        if (isRailwaySwitch(rails))
+        var isTwoWay = /*        */ isTwoWaySwitch(rails, supporting);
+        var isOneWay = !isTwoWay && isOneWaySwitch(rails, supporting);
+
+        if (isTwoWay || isOneWay)
         {
             var direction = getCartDirection(getVelocity(event));
+
+            // one-way switch can only shape rails in front of it
+            if (isOneWay && getOneWaySwitchDirection(supporting) == direction.getOppositeFace()) return;
 
             var next = rails.getRelative(direction);
             if (next.getType() != Material.RAIL) return;
@@ -44,12 +51,6 @@ public class MinecartListener implements Listener
             var yaw = passenger.getLocation().getYaw();
             setRailShape(next, getRailShape(next, direction, yaw));
         }
-    }
-
-    private static boolean isRailwaySwitch(Block rails)
-    {
-        var supporting = rails.getRelative(BlockFace.DOWN);
-        return isTwoWaySwitch(rails, supporting) || isOneWaySwitch(rails, supporting);
     }
 
     private static boolean isTwoWaySwitch(Block rail, Block supporting)
