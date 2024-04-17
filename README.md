@@ -34,6 +34,7 @@ Adds **automatic railway switches** to Minecraft JE Paper Server.
 
 ## Interesting facts 📖
 
-1. Works with animals.
+1. I have ported this to [Fabric 1.16.5](https://github.com/bigchunguspng/funny-rails-fabric).
+2. Works with animals:
 
 ![XD](https://github.com/bigchunguspng/railway-switch-paper/assets/70759405/b9ce349d-0ea2-4aed-b69b-ea7e65cc4625)
